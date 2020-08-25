@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import CardList from'../components/CardList';
 import ShearBox from '../components/ShearBox';
 import Scroll from '../components/Scroll';
-
+import ErrorBoundry from '../components/ErrorBoundry';
 import './App.css'
 
 
@@ -13,16 +13,13 @@ class App extends Component{
 		this.state={
 			robots:[],
 			seachfield:''
-		}
-		
+		}		
 	}
 
 	componentDidMount(){
 		fetch('https://jsonplaceholder.typicode.com/users')
 		.then(response => response.json())
-		.then(users => this.setState({robots:users}))
-		
-		
+		.then(users => this.setState({robots:users}))	
 	}
 
 	onSheachChange =(event) =>{
@@ -31,26 +28,25 @@ class App extends Component{
 	}
 
 	render(){
-		const filteredRobots= this.state.robots.filter(robots =>{
-			return robots.name.toLowerCase().includes(this.state.seachfield.toLowerCase());
+		const {robots, seachfield}= this.state;
+		const filteredRobots= robots.filter(robot =>{
+			return robot.name.toLowerCase().includes(seachfield.toLowerCase());
 		})
-		if(this.state.robots.lenght===0){
-			return <h1>Loading</h1>
-		}else{
-			return(
-			
-					<div className='tc'>
-						<h1 className='f1'> RoboFriend </h1>
-						<ShearBox sheachChange={this.onSheachChange}/>
-						<Scroll>
+		return robots.lenght ===0 ?
+			<h1>Loading</h1> :
+			(			
+				<div className='tc'>
+					<h1 className='f1'> RoboFriend </h1>
+					<ShearBox sheachChange={this.onSheachChange}/>
+					<Scroll>
+						<ErrorBoundry>
 							<CardList robots={filteredRobots}/>
-						</Scroll>
-					</div>
-				)
+						</ErrorBoundry>
+						
+					</Scroll>
+				</div>
+			)
 		}
-		
-
-	}
 	
 }
 
